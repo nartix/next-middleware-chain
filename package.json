@@ -1,7 +1,8 @@
 {
-  "name": "next-middleware-chain",
+  "name": "@nartix/next-middleware-chain",
   "version": "1.0.0",
   "type": "module",
+  "description": "A lightweight middleware chain for Next.js",
   "private": false,
   "scripts": {
     "dev": "tsc --watch",
@@ -16,7 +17,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nartix/next-middleware-chain.git"},
-  "dependencies": {},
+  "author": "Feroz Faiz",
+  "license": "MIT",
   "peerDependencies": {
         "next": ">=14.0.0"
   }
