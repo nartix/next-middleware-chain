@@ -1,0 +1,27 @@
+{
+  "name": "next-middleware-chain",
+  "version": "1.o.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "keywords": [
+    "nextjs",
+    "middleware",
+    "chain",
+    "next-middleware-chain"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nartix/next-middleware-chain.git"},
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "typescript": "latest"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+        "next": ">=14.0.0"
+  }
+}
