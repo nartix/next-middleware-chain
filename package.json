@@ -1,11 +1,15 @@
 {
-  "name": "@nartix/next-middleware-chain",
-  "version": "1.0.1",
+  "name": "@nartix/next-middleware-chains",
+  "version": "1.0.2",
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "description": "A lightweight middleware chain for Next.js",
   "private": false,
   "scripts": {
-    "test": "echo \"All tests passed\" && exit 0"
+    "test": "echo \"All tests passed\" && exit 0",
+    "dev": "tsc --watch",
+    "build": "tsc"
   },
   "publishConfig": {
     "access": "public"
@@ -18,10 +22,15 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nartix/next-middleware-chain.git"},
+    "url": "git+https://github.com/nartix/next-middleware-chain.git"
+  },
   "author": "Feroz Faiz",
   "license": "MIT",
   "peerDependencies": {
-        "next": ">=14.0.0"
+    "next": ">=14.0.0"
+  },
+  "devDependencies": {
+    "next": "^15.1.2",
+    "typescript": "^5.7.2"
   }
 }
