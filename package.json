@@ -1,5 +1,5 @@
 {
-  "name": "@nartix/next-middleware-chain",
+  "name": "next-middleware-chain",
   "version": "1.0.0",
   "type": "module",
   "description": "A lightweight middleware chain for Next.js",
