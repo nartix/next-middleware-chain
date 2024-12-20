@@ -36,7 +36,7 @@ Example middleware (e.g., `logRequestTime`):
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
-import { MiddlewareResult } from '@nartx/next-middleware-chain';
+import { MiddlewareResult } from 'next-middleware-chain';
 
 export async function logRequestTime(req: NextRequest, res: NextResponse): Promise<MiddlewareResult> {
   console.log('Request received at:', Date.now());
