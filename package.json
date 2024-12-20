@@ -16,10 +16,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nartix/next-middleware-chain.git"},
-  "devDependencies": {
-    "@repo/typescript-config": "*",
-    "typescript": "latest"
-  },
   "dependencies": {},
   "peerDependencies": {
         "next": ">=14.0.0"
