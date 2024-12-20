@@ -1,6 +1,6 @@
 {
   "name": "@nartix/next-middleware-chain",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "A lightweight middleware chain for Next.js",
   "private": false,
