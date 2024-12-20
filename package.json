@@ -1,5 +1,5 @@
 {
-  "name": "@nartix/next-middleware-chains",
+  "name": "@nartix/next-middleware-chain",
   "version": "1.0.2",
   "type": "module",
   "main": "dist/index.js",
