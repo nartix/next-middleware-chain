@@ -5,13 +5,13 @@ A lightweight utility for composing Next.js middleware functions in a simple and
 ## Installation
 
 ```bash
-npm install next-middleware-chain
+npm install @nartix/next-middleware-chain
 ```
 
 or
 
 ```bash
-yarn add next-middleware-chain
+yarn add @nartix/next-middleware-chain
 ```
 
 ## Overview
@@ -36,7 +36,7 @@ Example middleware (e.g., `logRequestTime`):
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
-import { MiddlewareResult } from 'next-middleware-chain';
+import { MiddlewareResult } from '@nartix/next-middleware-chain';
 
 export async function logRequestTime(req: NextRequest, res: NextResponse): Promise<MiddlewareResult> {
   console.log('Request received at:', Date.now());
@@ -47,11 +47,11 @@ export async function logRequestTime(req: NextRequest, res: NextResponse): Promi
 
 ### Composing Middlewares
 
-Use `combineMiddlewares` to create a composed handler:
+Use `createMiddlewareChain` to create a composed handler:
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
-import { createMiddlewareChain } from 'next-middleware-chain';
+import { createMiddlewareChain } from '@nartix/next-middleware-chain';
 import { logRequestTime } from './logRequestTime';
 
 const combined = createMiddlewareChain(
@@ -73,7 +73,7 @@ You might have a more complex scenario where you conditionally alter headers or 
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
-import { combineMiddlewares, MiddlewareResult } from 'middleware-chain';
+import { createMiddlewareChain, MiddlewareResult } from '@nartix/middleware-chain';
 
 // Example: A middleware that checks for an auth token.
 async function checkAuth(req: NextRequest, res: NextResponse): Promise<MiddlewareResult> {
@@ -94,7 +94,7 @@ async function addCustomHeader(req: NextRequest, res: NextResponse): Promise<Mid
 }
 
 // Combine the advanced middlewares
-const combined = combineMiddlewares(checkAuth, addCustomHeader);
+const combined = createMiddlewareChain(checkAuth, addCustomHeader);
 
 export default async function middleware(req: NextRequest) {
   return combined(req, NextResponse.next());
