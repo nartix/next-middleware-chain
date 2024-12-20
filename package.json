@@ -2,7 +2,7 @@
   "name": "next-middleware-chain",
   "version": "1.0.0",
   "type": "module",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc"
