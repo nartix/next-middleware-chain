@@ -8,6 +8,9 @@
     "dev": "tsc --watch",
     "build": "tsc"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "nextjs",
     "middleware",
