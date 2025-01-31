@@ -28,25 +28,29 @@ This package provides a function that takes multiple middleware handlers and exe
 
 ### Defining Your Middlewares
 
-A middleware function accepts a `NextRequest` and a `NextResponse` and returns a `MiddlewareResult` object, which contains:
-- `response`: A `NextResponse` or `Response` (the updated response).
-- `next`: A boolean indicating whether to continue the chain (`true`) or stop (`false`).
+In this new approach, each **middleware** is defined as a **factory** function. A **middleware factory** takes a `next` function and returns an async function that will receive:
 
-Example middleware (e.g., `logRequestTime`):
+- **`req`:** The `NextRequest`  
+- **`event`:** The `NextFetchEvent`  
+- **`incomingResponse` (optional):** A `NextResponse` passed forward from previous factories in the chain (if any)
+
+To continue the chain, call `next(req, event, response)`. To short-circuit, simply return a final `NextResponse` or a native `Response` (e.g., for redirects or errors).
 
 ```typescript
-import { MiddlewareResult } from '@nartix/next-middleware-chain';
+import { NextResponse } from 'next/server';
+import { MiddlewareFactory } from '@nartix/next-middleware-chain'; // or your package name
 
 export const logRequestTimeFactory: MiddlewareFactory = (next) => {
   return async (req, event, incomingResponse) => {
-  console.log('Request received at:', Date.now());
-  // Continue the chain
-  return next(req, event, incomingResponse);
-}
+    console.log('Request received at:', Date.now());
+    // Continue to the next middleware
+    return next(req, event, incomingResponse);
+  };
+};
 
 export const addHeaderA: MiddlewareFactory = (next) => {
   return async (req, event, incomingResponse) => {
-    // Use existing response or create a new one
+    // Use existing response if available, otherwise create a new one
     const response = incomingResponse ?? NextResponse.next();
     response.headers.set('X-Header-A', 'ValueA');
     // Continue the chain
@@ -60,8 +64,9 @@ export const addHeaderA: MiddlewareFactory = (next) => {
 Use `createMiddlewareChain` to create a composed handler:
 
 ```typescript
-import { addHeaderA } from './logRequestTimeFactory';
-import { addHeaderB } from './addHeaderAFactory';
+// middleware.ts
+import { logRequestTimeFactory } from './logRequestTimeFactory';
+import { addHeaderAFactory } from './addHeaderAFactory';
 
 const factories = [
   logRequestTimeFactory,
@@ -71,8 +76,6 @@ const factories = [
 
 export default createMiddlewareChain(factories);
 ```
-
-When any middleware returns `{ next: false }`, the chain stops and that response is returned immediately.
 
 ## Advanced Usage
 
