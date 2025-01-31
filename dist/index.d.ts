@@ -1,7 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-export interface MiddlewareResult {
-    response: Response | NextResponse;
-    next: boolean;
-}
-export type MiddlewareHandler = (req: NextRequest, res: NextResponse) => Promise<MiddlewareResult>;
-export declare function createMiddlewareChain(...middlewares: MiddlewareHandler[]): (req: NextRequest, res: NextResponse) => Promise<NextResponse | Response>;
+import { NextRequest, NextResponse, NextFetchEvent } from 'next/server';
+export type NextMiddleware = (request: NextRequest, event: NextFetchEvent, response?: NextResponse) => NextResponse | Response | null | undefined | void | Promise<NextResponse | Response | null | undefined | void>;
+export type MiddlewareFactory = (next: NextMiddleware) => NextMiddleware;
+export declare function createMiddlewareChain(factories?: MiddlewareFactory[], index?: number): NextMiddleware;
+//# sourceMappingURL=index.d.ts.map

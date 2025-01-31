@@ -35,14 +35,24 @@ A middleware function accepts a `NextRequest` and a `NextResponse` and returns a
 Example middleware (e.g., `logRequestTime`):
 
 ```typescript
-import { NextRequest, NextResponse } from 'next/server';
 import { MiddlewareResult } from '@nartix/next-middleware-chain';
 
-export async function logRequestTime(req: NextRequest, res: NextResponse): Promise<MiddlewareResult> {
+export const logRequestTimeFactory: MiddlewareFactory = (next) => {
+  return async (req, event, incomingResponse) => {
   console.log('Request received at:', Date.now());
   // Continue the chain
-  return { response: res, next: true };
+  return next(req, event, incomingResponse);
 }
+
+export const addHeaderA: MiddlewareFactory = (next) => {
+  return async (req, event, incomingResponse) => {
+    // Use existing response or create a new one
+    const response = incomingResponse ?? NextResponse.next();
+    response.headers.set('X-Header-A', 'ValueA');
+    // Continue the chain
+    return next(req, event, response);
+  };
+};
 ```
 
 ### Composing Middlewares
@@ -50,19 +60,16 @@ export async function logRequestTime(req: NextRequest, res: NextResponse): Promi
 Use `createMiddlewareChain` to create a composed handler:
 
 ```typescript
-import { NextRequest, NextResponse } from 'next/server';
-import { createMiddlewareChain } from '@nartix/next-middleware-chain';
-import { logRequestTime } from './logRequestTime';
+import { addHeaderA } from './logRequestTimeFactory';
+import { addHeaderB } from './addHeaderAFactory';
 
-const combined = createMiddlewareChain(
-  logRequestTime,
+const factories = [
+  logRequestTimeFactory,
+  addHeaderAFactory
   // ...add as many middleware functions as you like
-);
+  ];
 
-export default async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-  return combined(req, res);
-}
+export default createMiddlewareChain(factories);
 ```
 
 When any middleware returns `{ next: false }`, the chain stops and that response is returned immediately.
@@ -72,39 +79,46 @@ When any middleware returns `{ next: false }`, the chain stops and that response
 You might have a more complex scenario where you conditionally alter headers or short-circuit early based on certain conditions. For example:
 
 ```typescript
-import { NextRequest, NextResponse } from 'next/server';
-import { createMiddlewareChain, MiddlewareResult } from '@nartix/middleware-chain';
-
 // Example: A middleware that checks for an auth token.
-async function checkAuth(req: NextRequest, res: NextResponse): Promise<MiddlewareResult> {
-  const token = req.headers.get('Authorization');
-  if (!token) {
-    // Stop the chain and return a 401 immediately
-    return { response: new Response('Unauthorized', { status: 401 }), next: false };
-  }
-  // Authorized, continue the chain
-  return { response: res, next: true };
-}
+export const checkAuth: MiddlewareFactory = (next) => {
+  return async (req: NextRequest, event: NextFetchEvent, incomingResponse?: NextResponse) => {
+    const token = req.headers.get('Authorization');
+    if (!token) {
+      // Return a 401 immediately, short-circuiting the chain
+      return new Response('Unauthorized', { status: 401 });
+    }
+
+    // Otherwise, continue to the next middleware.
+    // If we received a shared response, reuse it; otherwise create a new one
+    return next(req, event, incomingResponse ?? NextResponse.next());
+  };
+};
 
 // Example: A middleware that adds a custom header to the response.
-async function addCustomHeader(req: NextRequest, res: NextResponse): Promise<MiddlewareResult> {
-  const updatedRes = res.clone();
-  updatedRes.headers.set('X-Custom-Header', 'MyValue');
-  return { response: updatedRes, next: true };
-}
+export const addCustomHeader: MiddlewareFactory = (next) => {
+  return async (req: NextRequest, event: NextFetchEvent, incomingResponse?: NextResponse) => {
+    const response = incomingResponse ?? NextResponse.next();
+    response.headers.set('X-Custom-Header', 'MyValue');
+    return next(req, event, response);
+  };
+};
 
-// Combine the advanced middlewares
-const combined = createMiddlewareChain(checkAuth, addCustomHeader);
+// Example: Calling All Subsequent Factories, Then Editing the Final Response
+export const addFinalHeader: MiddlewareFactory = (next) => {
+  return async (req, event, incomingResponse) => {
+    // Let other factories run first
+    const result = await next(req, event, incomingResponse ?? NextResponse.next());
 
-export default async function middleware(req: NextRequest) {
-  return combined(req, NextResponse.next());
-}
+    // If we got a NextResponse back, add a final header
+    if (result instanceof NextResponse) {
+      result.headers.set('X-Final-Header', 'FinalValue');
+      return result;
+    }
+
+    // If it's a plain Response or no return, just pass it along
+    return result;
+  };
+};
 ```
-
-**Result:**  
-- If `Authorization` header is missing, chain stops with a `401 Unauthorized` response.
-- Otherwise, `X-Custom-Header` is added before the final response is returned.
-
----
 
 **Happy coding!** If you have questions, feel free to open an issue or submit a pull request.

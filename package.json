@@ -1,10 +1,10 @@
 {
   "name": "@nartix/next-middleware-chain",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "description": "A lightweight middleware chain for Next.js",
+  "description": "A lightweight middleware chainer for Next.js",
   "private": false,
   "scripts": {
     "test": "echo \"All tests passed\" && exit 0",
